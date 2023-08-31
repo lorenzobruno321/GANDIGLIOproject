@@ -117,7 +117,10 @@ for k in list(range(0, glo.time_end)):
     m.constraints.add(m.power_GB_out[k] == m.list_load_furnace[k])
     
 def obj_func(m):
-    return sum(m.power_EL_out[kk]*glo.CAPEX_ele for kk in m.t)
+    CAPEX_EL_tot = sum(m.power_EL_out[kk]*glo.CAPEX_ele for kk in m.t)
+    OPEX_EL_tot = sum(m.power_EL_out[kk]*glo.CAPEX_ele for kk in m.t)
+    
+    return 
     
 m.obj = pyomo.Objective(rule=obj_func, sense=pyomo.minimize)
 instance = m.create_instance()

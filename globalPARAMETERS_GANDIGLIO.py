@@ -44,7 +44,7 @@ ECI = 166
 #====================================================================
 ## ELECTROLYSER
 #====================================================================
-CAPEX_ele = 1188                                                                        # [€/kWe/year]  https://www.iea.org/reports/electrolysers + Marocco Gandiglio
+CAPEX_ele = 1188                                                                        # [€/kWe]  https://www.iea.org/reports/electrolysers + Marocco Gandiglio
 OPEX_ele = 15.84                                                                        # [€/kWe/year]  Marocco Gandiglio
 INSTALL_ele = CAPEX_ele*0.1                                                             # [€/kWe/year]  Marocco Gandiglio
 REPLACE_ele = CAPEX_ele*0.35                                                            # [€/kWe/year]  Marocco Gandiglio
