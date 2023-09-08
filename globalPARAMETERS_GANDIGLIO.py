@@ -13,6 +13,7 @@ from scipy.io import loadmat
 #====================================================================
 time_end = 8760                                                                      # [h]
 time_vec = list(range(0, time_end))
+life = 20
 
 mat= loadmat('thermalload_momo_new.mat')
 mat= loadmat('PL.mat')
@@ -22,7 +23,7 @@ PL = PL[0:time_end]
 
 efficiency_ele = 0.65  
 power_EL_rated_min = 0
-power_EL_rated_max = 1e6
+power_EL_rated_max = 1e6 
 
 specific_work_cp = 4                                                                    # [MJ/kgH2]
 compression_work = specific_work_cp * 1000 / 3600                                       # [kWh/kgH2] = [MJ/kgH2] * [kWh/MJ] 
@@ -41,6 +42,9 @@ LHV_h2 = 33.33                                                                  
 density_h2 = 0.0899                                                                     # [kg/m3]
 density_h2o = 1000                                                                    # [kg/m3]
 ECI = 166         
+discount_rate = 0.04
+#====================================================================
+cost_energy_grid = 0.2966                                                               # [€/kWh] https://electricityinspain.com/electricity-prices-in-spain/
 #====================================================================
 ## ELECTROLYSER
 #====================================================================
@@ -48,6 +52,8 @@ CAPEX_ele = 1188                                                                
 OPEX_ele = 15.84                                                                        # [€/kWe/year]  Marocco Gandiglio
 INSTALL_ele = CAPEX_ele*0.1                                                             # [€/kWe/year]  Marocco Gandiglio
 REPLACE_ele = CAPEX_ele*0.35                                                            # [€/kWe/year]  Marocco Gandiglio
+power_EL_rated = 1000                                                                   # [€/kW]
+flow_rate_rated_ELE = power_EL_rated*1000/LHV_h2/3600                                  # [kg/s] = [MW] / [kWh/kg]
 #====================================================================
 ## HYDROGEN COMPRESSOR
 #====================================================================
@@ -56,6 +62,7 @@ compression_work = specific_work_cp * 1000 / 3600                               
 CAPEX_cp = 1600                                                                         # [€/kWe/year]  Marocco Gandiglio
 OPEX_cp_USD = 19                                                                        # [USD/kW] https://emp.lbl.gov/publications/benchmarking-utility-scale-pv
 OPEX_cp = OPEX_cp_USD / 0.92                                                            # [€/kWe]
+power_rated_CP = compression_work*1000/1                                                # [kW] = [kWh]/[h]
 #====================================================================
 ## HYDROGEN STORAGE TANK
 #====================================================================
@@ -78,6 +85,6 @@ OPEX_bo = OPEX_ele*0.02                                                         
 efficiency_bur = 0.98                                                                   # [-] Marocco Gandiglio
 perc_max_bur = 1                                                                        # [-] Marocco Gandiglio
 perc_min_bur = 0                                                                        # [-] Marocco Gandiglio
-power_bur_rated = 1000                                                                  # [kW] a caso (?)
+power_bur_rated = 7500                                                                  # [kW] a caso (?)
 CAPEX_bur = 63.32                                                                       # [€/kWth/year]  Marocco Gandiglio
 OPEX_bur = CAPEX_bur*0.05      

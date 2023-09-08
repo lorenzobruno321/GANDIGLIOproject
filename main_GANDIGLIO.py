@@ -31,7 +31,7 @@ m.power_HT_out = pyomo.Var(m.t, domain=pyomo.Reals, initialize=0)
 
 m.power_EL_rated_aux = pyomo.Var(m.t, domain=pyomo.Reals, initialize=0)
 m.power_EL_rated = pyomo.Var(m.t, domain=pyomo.Reals, initialize=0)
-m.optDELTA_ele = pyomo.Var(m.t, domain=pyomo.Reals, initialize=0)
+m.optDELTA_ele = pyomo.Var(m.t, domain=pyomo.Binary, initialize=0)
 
 m.capacity_HT = pyomo.Var(m.dt, domain=pyomo.Reals, initialize=0)
 
@@ -39,8 +39,7 @@ m.capacity_HT = pyomo.Var(m.dt, domain=pyomo.Reals, initialize=0)
 
 m.constraints = pyomo.ConstraintList()
 
-for k in list(range(0, glo.time_end)):
-        
+for k in list(range(0, glo.time_end)):        
     # =========================================================================
     ## eq1: POWER BALANCE NODE 1
     # ==========================================================================
@@ -117,19 +116,17 @@ for k in list(range(0, glo.time_end)):
     m.constraints.add(m.power_GB_out[k] == m.list_load_furnace[k])
     
 def obj_func(m):
-    CAPEX_EL_tot = sum(m.power_EL_out[kk]*glo.CAPEX_ele for kk in m.t)
-    OPEX_EL_tot = sum(m.power_EL_out[kk]*glo.CAPEX_ele for kk in m.t)
-    
-    return 
+    CAPEX_tot = glo.power_EL_rated*glo.CAPEX_ele + glo.flow_rate_rated_ELE*glo.CAPEX_ht + glo.power_rated_CP*glo.CAPEX_cp
+    OPEX_tot = sum(m.power_EL_out[kk]*glo.OPEX_ele for kk in m.t) + sum(m.power_CP_in[kk]*glo.OPEX_cp for kk in m.t) + sum(m.power_EL_out[kk]/glo.LHV_h2/3600*glo.OPEX_ht for kk in m.t)
+    OPEX_tot_disc = sum(OPEX_tot/(1 + glo.discount_rate**nn) for nn in range(0, glo.life)) 
+    tot_SUPPLY = sum(m.power_EG_buy[kk]*glo.cost_energy_grid for kk in m.t)*glo.life 
+    return CAPEX_tot + OPEX_tot_disc + tot_SUPPLY
     
 m.obj = pyomo.Objective(rule=obj_func, sense=pyomo.minimize)
 instance = m.create_instance()
 opt = pyomo.SolverFactory('gurobi')
 result = opt.solve(instance)
 result.write()
-
-
-
 # ===============================================================================================================================================
 ## # STORE the values model.optimization
 # ===============================================================================================================================================
